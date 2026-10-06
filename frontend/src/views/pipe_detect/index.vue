@@ -24,6 +24,42 @@
       </span>
     </p>
 
+    <section class="todo-panel">
+      <header class="todo-head">
+        <h3>工具归还待办（外出维修派出后生成）</h3>
+        <span class="todo-count">未归还 {{ todos.length }} 条</span>
+      </header>
+      <table v-if="todos.length" class="data-table todo-table">
+        <thead>
+          <tr>
+            <th>派遣编号</th>
+            <th>派出批次</th>
+            <th>维修人员</th>
+            <th>待归还工具</th>
+            <th>计划返回时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="todo in todos" :key="todo.id">
+            <td>{{ todo.dispatchNo }}</td>
+            <td>{{ todo.batchNo }}</td>
+            <td>{{ todo.worker }}</td>
+            <td>
+              <span v-for="(tool, index) in todo.tools" :key="tool.name" class="tool-chip">
+                {{ tool.name }} × {{ tool.qty }}<span v-if="index < todo.tools.length - 1">；</span>
+              </span>
+            </td>
+            <td>{{ todo.plannedReturn }}</td>
+            <td class="row-actions">
+              <button class="link" type="button" @click="returnTools(todo.id)">确认归还入库</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else class="empty-state todo-empty">当前没有待归还的维修工具</p>
+    </section>
+
     <form class="filter-bar" @submit.prevent="reload">
       <label v-for="field in filterFields" :key="field" class="filter-item">
         <span>{{ field }}</span>
@@ -74,11 +110,14 @@
 import { computed, onMounted, ref } from 'vue'
 
 import {
+  confirmToolReturn,
   downloadEntries,
   listEntries,
+  listReturnTodos,
   moduleMeta,
   runAction as applyAction,
 } from '@/api/local-service'
+import type { ReturnTodo } from '@/data/dispatch-types'
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('pipe_detect')
@@ -92,6 +131,7 @@ const total = ref(0)
 const errorMessage = ref('')
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
+const todos = ref<ReturnTodo[]>([])
 const statusSummary = computed(() =>
   statuses.map((status: string) => ({
     status,
@@ -122,12 +162,27 @@ function runAction(action: string, row: EntryRow) {
   reload()
 }
 
+function loadTodos() {
+  todos.value = listReturnTodos(false)
+}
+
+function returnTools(todoId: number) {
+  errorMessage.value = ''
+  const result = confirmToolReturn(todoId)
+  if (!result.ok) {
+    errorMessage.value = result.message
+    return
+  }
+  loadTodos()
+}
+
 function reload() {
   errorMessage.value = ''
   try {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    loadTodos()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '管道检测列表读取失败'
   }

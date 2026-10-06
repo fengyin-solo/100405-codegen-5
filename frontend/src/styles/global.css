@@ -35,3 +35,52 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .error-text { color: #b42318; }
 .status-legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 10px; font-size: 12px; color: var(--muted); }
 .legend-item { background: #eef2f7; border-radius: 999px; padding: 2px 10px; }
+.check-col { width: 44px; text-align: center; }
+.check-disabled { color: var(--muted); }
+.row-selected { background: #f0f6ff; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+/* 派出工台弹窗 */
+.modal-mask { position: fixed; inset: 0; background: rgba(15, 23, 42, .45); display: flex; align-items: flex-start; justify-content: center; padding: 28px 16px; z-index: 50; overflow-y: auto; }
+.modal { background: #fff; border-radius: 10px; border: 1px solid var(--border); width: min(980px, 100%); box-shadow: 0 18px 50px rgba(15, 23, 42, .25); }
+.bench-modal { padding: 16px 18px; }
+.modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.modal-head h3 { margin: 0; font-size: 16px; }
+.modal-sub { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+.tool-strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 12px 0; padding: 8px 10px; background: #f6f8fb; border-radius: 8px; }
+.tool-strip-title { font-size: 12px; color: var(--muted); }
+.tool-chip { display: inline-block; background: #e8f0fe; color: #174ea6; border-radius: 999px; padding: 2px 10px; font-size: 12px; }
+.tool-chip.tool-low { background: #fdecec; color: #b42318; }
+.bench-banner { border-radius: 8px; padding: 8px 12px; font-size: 13px; margin-bottom: 10px; background: #ecfdf3; color: #067647; border: 1px solid #abefc6; }
+.bench-banner.warn { background: #fffaeb; color: #b54708; border-color: #fedf89; }
+.bench-list { display: flex; flex-direction: column; gap: 10px; max-height: 52vh; overflow-y: auto; padding-right: 4px; }
+.bench-card { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; background: #fff; }
+.bench-card.is-confirmed { background: #f3faf5; border-color: #abefc6; }
+.bench-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+.bench-source { margin-left: 10px; color: var(--muted); font-size: 12px; }
+.bench-hint { font-size: 12px; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+.bench-hint.ok { background: #ecfdf3; color: #067647; }
+.bench-hint.unassigned { background: #eef2f7; color: var(--muted); }
+.bench-hint.error { background: #fdecec; color: #b42318; }
+.bench-fields { border: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; }
+.bench-fields:disabled { opacity: .85; }
+.bench-field span { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+.bench-field select, .bench-field input { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 13px; }
+.bench-tools { grid-column: 1 / -1; }
+.tool-editor { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.tool-pick { background: #e8f0fe; border-radius: 999px; padding: 2px 10px; font-size: 12px; display: inline-flex; gap: 6px; align-items: center; }
+.tool-empty { color: var(--muted); font-size: 12px; }
+.tool-add { display: inline-flex; gap: 6px; align-items: center; }
+.tool-add select { border: 1px solid var(--border); border-radius: 6px; padding: 4px 6px; font-size: 12px; }
+.qty-input { width: 64px; border: 1px solid var(--border); border-radius: 6px; padding: 4px 6px; font-size: 12px; }
+.modal-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; }
+.bench-foot-tip { color: var(--muted); font-size: 12px; }
+.bench-foot-actions { display: flex; gap: 8px; white-space: nowrap; }
+
+/* 管道检测页工具归还待办 */
+.todo-panel { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+.todo-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.todo-head h3 { margin: 0; font-size: 14px; }
+.todo-count { font-size: 12px; color: var(--muted); }
+.todo-table th, .todo-table td { font-size: 12px; }
+.todo-empty { padding: 10px 0; }
