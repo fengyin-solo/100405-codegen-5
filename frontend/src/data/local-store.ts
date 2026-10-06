@@ -8,6 +8,50 @@ function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
 
+function seedRowsMissingByField(
+  stored: EntryRow[],
+  seeded: EntryRow[],
+  field: string,
+): EntryRow[] {
+  const storedValues = new Set(stored.map((row) => String(row[field] ?? '')))
+  return seeded.filter((row) => !storedValues.has(String(row[field] ?? '')))
+}
+
+function migrateBusinessRows(
+  data: Record<string, EntryRow[]>,
+  fallback: Record<string, EntryRow[]>,
+): Record<string, EntryRow[]> {
+  const next = { ...fallback, ...data }
+
+  for (const [key, field] of [
+    ['defect', '缺陷编号'],
+    ['out_repair', '派遣编号'],
+  ] as const) {
+    const stored = [...(data[key] ?? [])]
+    const additions = seedRowsMissingByField(stored, fallback[key], field)
+    if (additions.length > 0) {
+      let nextId = stored.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0)
+      next[key] = [
+        ...stored,
+        ...additions.map((row) => {
+          const copied = clone(row)
+          copied.id = ++nextId
+          return copied
+        }),
+      ]
+    }
+  }
+
+  return next
+}
+
+function persist(data: Record<string, EntryRow[]>): void {
+  cache = data
+  if (typeof window !== 'undefined' && window.localStorage) {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  }
+}
+
 function readStorage(): Record<string, EntryRow[]> {
   const fallback = clone(SEED_ROWS)
   if (typeof window === 'undefined' || !window.localStorage) {
@@ -20,9 +64,11 @@ function readStorage(): Record<string, EntryRow[]> {
   }
   try {
     const parsed = JSON.parse(raw) as Record<string, EntryRow[]>
-    return { ...fallback, ...parsed }
+    const migrated = migrateBusinessRows(parsed, fallback)
+    persist(migrated)
+    return migrated
   } catch {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback))
+    persist(fallback)
     return fallback
   }
 }

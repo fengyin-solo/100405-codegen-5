@@ -32,6 +32,39 @@ export type ActionResult = {
   message: string
 }
 
+export type DispatchItemInput = {
+  id: number
+  worker: string
+  hours: number
+  startTime: string
+  tools: string[]
+  batchNo?: string
+}
+
+export type DispatchItemResult = {
+  id: number
+  dispatchNo: string
+  ok: boolean
+  status: 'confirmed' | 'retry' | 'unassigned'
+  reason?: string
+  batchNo?: string
+}
+
+export type DispatchResult = {
+  ok: boolean
+  message: string
+  batchNo: string
+  confirmed: DispatchItemResult[]
+  failed: DispatchItemResult[]
+  unassigned: DispatchItemResult[]
+}
+
+export type DispatchResourceSummary = {
+  workers: string[]
+  toolInventory: Record<string, number>
+  toolAvailability: Record<string, number>
+}
+
 export type OverviewResult = {
   cards: { label: string; value: number }[]
   modules: { name: string; created: number; pending: number; abnormal: number }[]
